@@ -1,10 +1,18 @@
-noPreschools = new Mongo.Collection("noPreschool");
-percentData = noPreschools.find({DataFormat: "Percent"});
+
+noPreschool = new Mongo.Collection("noPreschool");
+percentData = noPreschool.find({DataFormat: "Percent", TimeFrame: "2007-2009"});
+
 
 if (Meteor.isClient) {
 Meteor.subscribe("noPreschool");
 
 stateData = {}
+
+Meteor.subscribe("data", function(d){
+	console.log("hello");
+	console.log(percentData.fetch())
+})
+
 
 percentData.fetch().forEach(function(d) {
    return console.log(d)
@@ -19,10 +27,13 @@ percentData.fetch().forEach(function(d) {
 }
 
 if (Meteor.isServer) {
-      Meteor.publish("noPreschool", function () {
-      return noPreschools.find();
-    });
-  }
 
 
+  Meteor.startup(function () {
+      // code to run on server at startup
+      Meteor.publish("data", function () {
+	  return percentData;
+      });
+  });
+}
 
