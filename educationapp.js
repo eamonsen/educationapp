@@ -4,13 +4,22 @@ percentData = noPreschool.find({DataFormat: "Percent", TimeFrame: "2007-2009"});
 
 
 if (Meteor.isClient) {
+  function tooltipHtml(n, state){ /* function to create html content string in tooltip div. */
+    return "<h4>"+n+"</h4><table>"+
+      "<tr><td>Percent not enrolled in Preschool</td><td>"+(state.Data)+"</td></tr>"+
+      "</table>";
+  }
+
 Meteor.subscribe("noPreschool");
 
 stateData = {}
 
 Meteor.subscribe("data", function(d){
-	console.log("hello");
-	console.log(percentData.fetch())
+	percentData.fetch().map(function(state) {
+    state.color=d3.interpolate("#ffffcc", "#800026")(state.Data);
+    stateData[state.Location]=state
+  })
+  uStates.draw("#statesvg", stateData, tooltipHtml);
 })
 
 
