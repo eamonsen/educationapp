@@ -1,5 +1,5 @@
 noPreschool = new Mongo.Collection("noPreschool");
-percentData = noPreschool.find({DataFormat: "Percent"});
+percentData = noPreschool.find({DataFormat: "Percent", TimeFrame: "2007-2009"});
 
 if (Meteor.isClient) {
   Template.educationapp.noPreschool = function () {
@@ -7,6 +7,12 @@ if (Meteor.isClient) {
   }
 
 stateData = {}
+
+Meteor.subscribe("data", function(d){
+	console.log("hello");
+	console.log(percentData.fetch())
+})
+
 
 percentData.fetch().forEach(function(d) {
    return console.log(d)
@@ -22,6 +28,9 @@ percentData.fetch().forEach(function(d) {
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
-    // code to run on server at startup
+      // code to run on server at startup
+      Meteor.publish("data", function () {
+	  return percentData;
+      });
   });
 }
